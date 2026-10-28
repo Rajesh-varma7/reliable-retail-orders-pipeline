@@ -1,0 +1,21 @@
+{
+  "run_id": "7ad19be9-ffd3-4242-839a-b3b396e9cd10",
+  "source_file": "sample_orders.csv",
+  "started_at": "2026-10-28T08:25:34+00:00",
+  "ended_at": "2026-10-28T08:25:34+00:00",
+  "status": "SUCCESS",
+  "input_count": 7,
+  "accepted_count": 3,
+  "rejected_count": 4,
+  "published_count": 3,
+  "target_row_count": 3,
+  "accepted_amount_total": 143.75,
+  "reconciliation": {
+    "input_equals_accepted_plus_rejected_or_duplicates": true,
+    "input_count": 7,
+    "accepted_count": 3,
+    "rejected_count": 4,
+    "note": "Accepted + rejected can be lower than input when exact duplicate rows are collapsed."
+  },
+  "duration_seconds": 0.022241
+}

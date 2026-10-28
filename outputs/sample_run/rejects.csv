@@ -1,0 +1,5 @@
+order_id,customer_id,order_ts,amount,status,source_file,run_id,reject_reasons
+ORD-1003,C099,2025-02-02T09:30:00+00:00,75.00,SHIPPED,sample_orders.csv,7ad19be9-ffd3-4242-839a-b3b396e9cd10,INVALID_CUSTOMER_REFERENCE
+ORD-1004,C001,not-a-timestamp,25.00,PAID,sample_orders.csv,7ad19be9-ffd3-4242-839a-b3b396e9cd10,MALFORMED_ORDER_TS
+ORD-1005,C003,2025-02-03T12:00:00+00:00,-10.00,PLACED,sample_orders.csv,7ad19be9-ffd3-4242-839a-b3b396e9cd10,NEGATIVE_AMOUNT
+ORD-1006,C002,2025-02-04T12:00:00+00:00,50.00,UNKNOWN,sample_orders.csv,7ad19be9-ffd3-4242-839a-b3b396e9cd10,INVALID_STATUS

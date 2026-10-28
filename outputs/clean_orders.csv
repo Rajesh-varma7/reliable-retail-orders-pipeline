@@ -1,0 +1,4 @@
+order_id,customer_id,order_ts,amount,status,source_file,run_id,loaded_at
+ORD-1001,C001,2025-02-01T10:15:00+00:00,125.5,PAID,sample_orders.csv,17df747b-e9cd-421a-887b-a1243b8758ed,2026-10-28T09:19:39+00:00
+ORD-1002,C002,2025-02-01T11:00:00+00:00,0.0,PLACED,sample_orders.csv,17df747b-e9cd-421a-887b-a1243b8758ed,2026-10-28T09:19:39+00:00
+ORD-1007,C003,2025-02-05T12:00:00+00:00,18.25,SHIPPED,sample_orders.csv,17df747b-e9cd-421a-887b-a1243b8758ed,2026-10-28T09:19:39+00:00
