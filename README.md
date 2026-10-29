@@ -109,10 +109,7 @@ SELECT run\_id, status, input\_count, accepted\_count, rejected\_count, error\_m
 FROM pipeline\_runs ORDER BY started\_at DESC;
 ```
 
-## Performance
-
-\## Performance
-
+### Performance
 
 
 Run the benchmark with:
@@ -133,15 +130,14 @@ The benchmark generates synthetic data with a fixed seed, runs the pipeline in a
 
 
 
-\### Measured results
+## Measured results
 
 
 
-Requested rows	Actual input rows	Accepted	Rejected	Exact duplicates collapsed	Elapsed time	Throughput
-
-10,000	10,100	9,803	201	96	11.855 s	844 rows/s
-
-1,00,000	1,01,000	98,021	2,000	979	110.519 s	905 rows/s
+| Requested Rows | Actual Input Rows | Accepted | Rejected | Exact Duplicates Collapsed | Elapsed Time | Throughput |
+|---:|---:|---:|---:|---:|---:|---:|
+| 10,000 | 10,100 | 9,803 | 201 | 96 | 11.855 s | 844 rows/s |
+| 100,000 | 101,000 | 98,021 | 2,000 | 979 | 110.519 s | 905 rows/s |
 
 
 
