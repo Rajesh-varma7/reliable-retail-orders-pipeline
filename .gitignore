@@ -2,7 +2,12 @@
 __pycache__/
 .pytest_cache/
 *.pyc
+.env
+
+# Generated pipeline outputs
 outputs/*.db
 outputs/*.sqlite
+outputs/*.csv
+outputs/*.json
+outputs/idempotency_test/
 data/orders.csv
-.env
