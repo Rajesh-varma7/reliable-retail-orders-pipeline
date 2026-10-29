@@ -48,8 +48,14 @@ def test_invalid_reference_rejected():
 
 def test_exact_duplicate_collapsed():
     df = pd.DataFrame([base_row(), base_row()])
-    clean, rejects = process_dataframe(df, CUSTOMERS, "x.csv", "r", "fixed")
-    assert len(clean) == 1 and rejects.empty
+    metrics = {}
+
+
+    clean, rejects = process_dataframe(df, CUSTOMERS, "x.csv", "r", "fixed", metrics=metrics)
+
+    assert len(clean) == 1 
+    assert rejects.empty
+    assert metrics["exact_duplicates_collapsed"] == 1
 
 def test_conflicting_duplicate_key_rejects_all_rows_for_key():
     df = pd.DataFrame([base_row(), base_row(amount="99")])

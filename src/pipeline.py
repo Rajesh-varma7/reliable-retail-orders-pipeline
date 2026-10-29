@@ -115,6 +115,7 @@ def process_dataframe(
     source_file: str,
     run_id: str,
     loaded_at: str | None = None,
+    metrics: dict[str, int] | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Validate records, quarantine invalid rows, and return deterministic clean output."""
     validate_schema(source)
@@ -135,6 +136,7 @@ def process_dataframe(
             conflict_keys.add(str(key))
 
     seen_exact: set[tuple[str, ...]] = set()
+    exact_duplicates_collapsed = 0
     clean_records: list[dict[str, Any]] = []
     reject_records: list[dict[str, Any]] = []
 
@@ -167,6 +169,7 @@ def process_dataframe(
         # Exact duplicates only count once when their record is otherwise valid.
         signature = tuple("<NULL>" if _is_missing(raw[c]) else str(raw[c]) for c in REQUIRED_COLUMNS)
         if not reasons and signature in seen_exact:
+            exact_duplicates_collapsed += 1
             continue
         if not reasons:
             seen_exact.add(signature)
@@ -190,6 +193,8 @@ def process_dataframe(
 
     clean = pd.DataFrame(clean_records, columns=TARGET_COLUMNS)
     rejects = pd.DataFrame(reject_records, columns=REQUIRED_COLUMNS + ["source_file", "run_id", "reject_reasons"])
+    if metrics is not None:
+    	metrics["exact_duplicates_collapsed"] = exact_duplicates_collapsed
     return clean, rejects
 
 
@@ -244,7 +249,11 @@ def run_pipeline(input_path: str | Path, customers_path: str | Path, db_path: st
             source = pd.read_csv(input_path, dtype=object)
         input_count = len(source)
         validate_schema(source)
-        clean, rejects = process_dataframe(source, customers, source_file, run_id)
+        processing_metrics: dict[str, int] = {}
+        clean, rejects = process_dataframe(
+            source, customers, source_file, run_id, metrics=processing_metrics
+        )
+        exact_duplicates_collapsed = processing_metrics["exact_duplicates_collapsed"]
         accepted_count, rejected_count = len(clean), len(rejects)
         clean.to_csv(clean_path, index=False)
         rejects.to_csv(reject_path, index=False)
@@ -258,13 +267,26 @@ def run_pipeline(input_path: str | Path, customers_path: str | Path, db_path: st
             "published_count": published_count, "target_row_count": target_count,
             "accepted_amount_total": source_amount,
             "reconciliation": {
-                "input_equals_accepted_plus_rejected_or_duplicates": input_count == accepted_count + rejected_count
-                    or input_count >= accepted_count + rejected_count,
-                "input_count": input_count, "accepted_count": accepted_count,
+                "input_count": input_count,
+                "accepted_count": accepted_count,
                 "rejected_count": rejected_count,
-                "note": "Accepted + rejected can be lower than input when exact duplicate rows are collapsed."
+                "exact_duplicates_collapsed": exact_duplicates_collapsed,
+                "accounted_count": (
+                    accepted_count + rejected_count + exact_duplicates_collapsed
+                ),
+                "reconciliation_difference": (
+                    input_count - accepted_count - rejected_count
+                    - exact_duplicates_collapsed
+                ),
+                "reconciled": (
+                    input_count
+                    == accepted_count + rejected_count + exact_duplicates_collapsed
+                )
+
             }
-        }
+	
+	}
+
     except Exception as exc:
         status, error_message = "FAILED", str(exc)
         LOG.exception("Pipeline run failed: %s", error_message)
